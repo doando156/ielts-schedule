@@ -325,7 +325,11 @@ const App = () => {
     <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
       <header className="app-header">
         <div className="logo-container">
-          <img src="/Ilets_avatar.png" alt="IELTS Schedule" className="logo" />
+          <img 
+  src={`${process.env.PUBLIC_URL}/Ilets_avatar.png`} 
+  alt="IELTS Schedule" 
+  className="logo" 
+/>
           <h1>IELTS Study Schedule</h1>
         </div>
         <ThemeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
