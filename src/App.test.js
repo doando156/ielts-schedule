@@ -1,8 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+// Mock axios
+jest.mock('axios', () => ({
+  get: jest.fn(() => Promise.reject(new Error('API not available')))
+}));
+
+describe('App Component', () => {
+  test('renders IELTS Study Schedule heading', () => {
+    render(<App />);
+    const headingElement = screen.getByText(/IELTS Study Schedule/i);
+    expect(headingElement).toBeInTheDocument();
+  });
 });
