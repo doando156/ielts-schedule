@@ -1,70 +1,113 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# IELTS Study Schedule
 
-## Available Scripts
+Ứng dụng lên lịch học và theo dõi quá trình học IELTS giúp người học quản lý thời gian và tiến độ học tập hiệu quả.
 
-In the project directory, you can run:
+## Tính Năng Chính
+- 📅 **Lên lịch học tập IELTS có cấu trúc** cho cả 4 kỹ năng: Nghe, Nói, Đọc, Viết.
+- 📊 **Theo dõi tiến độ học tập** với biểu đồ trực quan.
+- 🌓 **Hỗ trợ chế độ sáng/tối** giúp tối ưu trải nghiệm người dùng.
+- ✅ **Cập nhật trạng thái bài học** (Chưa bắt đầu, Đang học, Đã hoàn thành, Quá hạn).
+- 🔍 **Bộ lọc** giúp dễ dàng tìm kiếm bài học theo tháng, kỹ năng và trạng thái.
+- 📱 **Giao diện thích ứng** với các thiết bị di động.
+- 💾 **Tự động lưu tiến độ vào localStorage** để không mất dữ liệu khi làm mới trang.
 
-### `npm start`
+## Demo
+Truy cập phiên bản demo tại: [IELTS Study Schedule Demo](https://doando156.github.io/ielts-schedule/)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Cài Đặt và Sử Dụng
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Yêu Cầu
+- **Node.js** (phiên bản 12.x trở lên)
+- **npm** hoặc **yarn**
 
-### `npm test`
+### Cài Đặt
+Clone repository về máy của bạn:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+git clone https://github.com/doando156/ielts-schedule.git
+```
 
-### `npm run build`
+Di chuyển vào thư mục dự án:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+cd ielts-schedule
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Cài đặt các gói phụ thuộc:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm install
+```
 
-### `npm run eject`
+### Sử Dụng
+Khởi chạy ứng dụng ở chế độ phát triển:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm start
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Truy cập ứng dụng tại:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+http://localhost:3000
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Triển Khai
+Dự án được cấu hình để triển khai lên **GitHub Pages**:
 
-## Learn More
+1. Đảm bảo đã cấu hình `homepage` trong `package.json`:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   ```json
+   "homepage": "https://username.github.io/ielts-schedule"
+   ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+2. Cài đặt **gh-pages** nếu chưa có:
 
-### Code Splitting
+   ```bash
+   npm install --save-dev gh-pages
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+3. Triển khai lên GitHub Pages:
 
-### Analyzing the Bundle Size
+   ```bash
+   npm run deploy
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Cấu Trúc Dự Án
+```
+ielts-schedule/
+├── public/              # Tài nguyên tĩnh
+├── src/                 # Mã nguồn
+│   ├── components/      # Các component React
+│   │   ├── CurrentDateIndicator.js
+│   │   ├── Footer.js
+│   │   ├── Pagination.js
+│   │   ├── ScheduleFilter.js
+│   │   ├── ScheduleTable.js
+│   │   ├── StatsDashboard.js
+│   │   └── ThemeToggle.js
+│   ├── App.css         # Styles cho ứng dụng
+│   ├── App.js          # Component chính
+│   └── index.js        # Điểm vào ứng dụng
+└── package.json        # Cấu hình dự án và dependencies
+```
 
-### Making a Progressive Web App
+## Các Lệnh npm
+- `npm start`: Chạy ứng dụng ở chế độ phát triển.
+- `npm run build`: Tạo phiên bản tối ưu cho production.
+- `npm run deploy`: Triển khai lên GitHub Pages.
+- `npm test`: Chạy các bài kiểm thử.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Công Nghệ Sử Dụng
+- **React**
+- **JavaScript (ES6+)**
+- **CSS3**
+- **LocalStorage API**
+- **GitHub Pages**
 
-### Advanced Configuration
+## Tác Giả
+**Do Doan**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Giấy Phép
+**Developed by Do Doan**
