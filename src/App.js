@@ -340,7 +340,7 @@ const App = () => {
     
     setFilteredSchedule(result);
     setCurrentPage(1); // Reset to first page when filters change
-  }, [schedule, filters]);
+  }, [schedule, filters, loadFromApiOrGenerate]);
 
   // Handle filter change
   const handleFilterChange = (filterType, value) => {

@@ -13,8 +13,8 @@ const Footer = () => {
           <h3>Liên kết</h3>
           <ul>
             <li><a href="https://ieltstrainingonline.com" target="_blank" rel="noopener noreferrer">IELTS Training Online</a></li>
-            <li><a href="#" onClick={(e) => {e.preventDefault(); alert('Tính năng đang phát triển');}}>Hướng dẫn sử dụng</a></li>
-            <li><a href="#" onClick={(e) => {e.preventDefault(); alert('Tính năng đang phát triển');}}>Về chúng tôi</a></li>
+            <li><a href="/" onClick={(e) => e.preventDefault()}>Hướng dẫn sử dụng</a></li>
+            <li><a href="/" onClick={(e) => e.preventDefault()}>Về chúng tôi</a></li>
           </ul>
         </div>
         
