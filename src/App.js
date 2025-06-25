@@ -30,6 +30,12 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
 
+  // Date states
+  const [startDate, setStartDate] = useState(() => {
+    const saved = localStorage.getItem('scheduleStartDate');
+    return saved ? new Date(saved) : new Date();
+  });
+
   // Check authentication status on load
   useEffect(() => {
     const checkAuth = async () => {
@@ -97,21 +103,23 @@ const App = () => {
   }, []);
 
   // Function to generate a schedule with specific Reading, Speaking, Listening, and Writing tests
-  const generateSchedule = () => {
+  const generateSchedule = (customStartDate) => {
     const newSchedule = [];
     const skills = ['Reading', 'Listening', 'Speaking', 'Writing'];
     const times = ['6:30 AM', '10:00 PM'];
     
-    const today = new Date();
-    let skillIndex = 0;
-    let readingTestIndex = 0; // Track Reading test index
-    let speakingTestIndex = 0; // Track Speaking test index
-    let listeningTestIndex = 0; // Track Listening test index
-    let writingTestIndex = 0; // Track Writing test index
+    // Sử dụng customStartDate nếu được cung cấp, nếu không dùng startDate từ state
+    const scheduleStartDate = customStartDate || startDate;
     
-    for (let i = 0; i < 200; i++) { // Increased to ensure we have enough slots for all tests
-      const lessonDate = new Date(today);
-      lessonDate.setDate(today.getDate() + Math.floor(i/2)); // Increment date every 2 lessons
+    let skillIndex = 0;
+    let readingTestIndex = 0;
+    let speakingTestIndex = 0;
+    let listeningTestIndex = 0;
+    let writingTestIndex = 0;
+    
+    for (let i = 0; i < 200; i++) {
+      const lessonDate = new Date(scheduleStartDate);
+      lessonDate.setDate(scheduleStartDate.getDate() + Math.floor(i/2));
       
       const formattedDate = lessonDate.toLocaleDateString('en-US', { 
         year: 'numeric', 
@@ -225,9 +233,10 @@ const App = () => {
   // Move this function outside of useEffect
   // Place this before your useEffect
   const loadFromApiOrGenerate = useCallback(() => {
-    // Try to fetch data from API if it exists
+    // Thử tải dữ liệu từ API
     axios.get('/api/getSchedule')
       .then(response => {
+        // Xử lý dữ liệu từ API
         let updatedSchedule = response.data;
         // Kiểm tra các bài quá hạn
         updatedSchedule = checkForOverdueItems(updatedSchedule);
@@ -242,8 +251,19 @@ const App = () => {
       .catch(err => {
         console.log('No backend API found or error fetching data. Generating local schedule.');
         setError(err.message);
-        // Generate schedule locally if API is not available
-        let generatedSchedule = generateSchedule();
+        
+        // Lấy ngày bắt đầu đã lưu hoặc dùng ngày hiện tại nếu chưa có
+        const savedStartDate = localStorage.getItem('scheduleStartDate');
+        const useStartDate = savedStartDate ? new Date(savedStartDate) : new Date();
+        
+        // Lưu ngày bắt đầu nếu chưa có
+        if (!savedStartDate) {
+          localStorage.setItem('scheduleStartDate', useStartDate.toISOString());
+          setStartDate(useStartDate);
+        }
+        
+        // Tạo lịch trình từ ngày bắt đầu đã lưu
+        let generatedSchedule = generateSchedule(useStartDate);
         // Kiểm tra các bài quá hạn
         generatedSchedule = checkForOverdueItems(generatedSchedule);
         // Tự động cập nhật trạng thái bài học hôm nay
@@ -251,10 +271,9 @@ const App = () => {
         
         setSchedule(generatedSchedule);
         setLoading(false);
-        // Save the generated schedule to localStorage
         localStorage.setItem('ieltsSchedule', JSON.stringify(generatedSchedule));
       });
-  }, []); // Thêm dependencies nếu cần
+  }, [generateSchedule]); // Cập nhật dependency
 
   useEffect(() => {
     setLoading(true);
@@ -302,11 +321,27 @@ const App = () => {
 
   // Add a clear schedule function
   const clearSchedule = () => {
-    localStorage.removeItem('ieltsSchedule');
-    const newSchedule = generateSchedule();
+    if(window.confirm("Bạn có chắc muốn xóa lịch học? Điều này sẽ giữ nguyên ngày bắt đầu ban đầu.")) {
+      localStorage.removeItem('ieltsSchedule');
+      const savedStartDate = localStorage.getItem('scheduleStartDate');
+      const useStartDate = savedStartDate ? new Date(savedStartDate) : new Date();
+      const newSchedule = generateSchedule(useStartDate);
+      setSchedule(newSchedule);
+      localStorage.setItem('ieltsSchedule', JSON.stringify(newSchedule));
+      setCurrentPage(1);
+    }
+  };
+
+  // Change start date function
+  const changeStartDate = (newStartDate) => {
+    setStartDate(newStartDate);
+    localStorage.setItem('scheduleStartDate', newStartDate.toISOString());
+    
+    // Tạo lịch mới từ ngày bắt đầu mới
+    const newSchedule = generateSchedule(newStartDate);
     setSchedule(newSchedule);
     localStorage.setItem('ieltsSchedule', JSON.stringify(newSchedule));
-    setCurrentPage(1); // Reset to first page
+    setCurrentPage(1);
   };
 
   // Filter effect
@@ -445,7 +480,11 @@ const App = () => {
           className="regenerate-button"
           onClick={() => {
             if (window.confirm('Bạn có chắc chắn muốn tạo lịch mới? Mọi tiến độ học tập hiện tại sẽ bị mất!')) {
-              const newSchedule = generateSchedule();
+              // Giữ ngày bắt đầu ban đầu khi tạo lại lịch
+              const savedStartDate = localStorage.getItem('scheduleStartDate');
+              const useStartDate = savedStartDate ? new Date(savedStartDate) : startDate;
+              
+              const newSchedule = generateSchedule(useStartDate);
               setSchedule(newSchedule);
               localStorage.setItem('ieltsSchedule', JSON.stringify(newSchedule));
               setCurrentPage(1);
