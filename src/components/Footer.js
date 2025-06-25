@@ -20,7 +20,7 @@ const Footer = () => {
         
         <div className="footer-section">
           <h3>Liên hệ</h3>
-          <p>Email: contact@example.com</p>
+          <p>Email: dodoan1333@gmail.com</p>
           <div className="social-links">
             <a href="#" className="social-icon">📱</a>
             <a href="#" className="social-icon">📧</a>
