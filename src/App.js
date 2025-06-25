@@ -284,7 +284,7 @@ const App = () => {
     } else {
       loadFromApiOrGenerate();
     }
-  }, []);
+  }, [loadFromApiOrGenerate]); // Thêm loadFromApiOrGenerate vào đây
 
   // Update the status of a lesson
   const updateStatus = (index, status) => {
