@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ScheduleTable from './components/ScheduleTable';
 import ScheduleFilter from './components/ScheduleFilter';
 import StatsDashboard from './components/StatsDashboard';
@@ -224,7 +224,7 @@ const App = () => {
 
   // Move this function outside of useEffect
   // Place this before your useEffect
-  const loadFromApiOrGenerate = () => {
+  const loadFromApiOrGenerate = useCallback(() => {
     // Try to fetch data from API if it exists
     axios.get('/api/getSchedule')
       .then(response => {
@@ -254,7 +254,7 @@ const App = () => {
         // Save the generated schedule to localStorage
         localStorage.setItem('ieltsSchedule', JSON.stringify(generatedSchedule));
       });
-  };
+  }, []); // Thêm dependencies nếu cần
 
   useEffect(() => {
     setLoading(true);
