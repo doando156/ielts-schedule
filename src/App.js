@@ -6,10 +6,19 @@ import Pagination from './components/Pagination';
 import ThemeToggle from './components/ThemeToggle';
 import CurrentDateIndicator from './components/CurrentDateIndicator';
 import Footer from './components/Footer';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+import { isAuthenticated, logout, getUserProfile } from './api/auth';
 import axios from 'axios';
 import './App.css';
 
 const App = () => {
+  // Auth states
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [showRegister, setShowRegister] = useState(false);
+  
+  // Existing states
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,6 +29,48 @@ const App = () => {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
+
+  // Check authentication status on load
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (isAuthenticated()) {
+        setIsLoggedIn(true);
+        setUserData(JSON.parse(localStorage.getItem('ielts_auth')));
+        
+        try {
+          // Validate token by fetching user profile
+          const profile = await getUserProfile();
+          setUserData(prev => ({ ...prev, ...profile }));
+        } catch (error) {
+          console.log('Token invalid or expired');
+          logout();
+          setIsLoggedIn(false);
+          setUserData(null);
+        }
+      }
+    };
+    
+    checkAuth();
+  }, []);
+
+  // Login handler
+  const handleLogin = (userData) => {
+    setIsLoggedIn(true);
+    setUserData(userData);
+  };
+
+  // Logout handler
+  const handleLogout = () => {
+    logout();
+    setIsLoggedIn(false);
+    setUserData(null);
+  };
+
+  // Register success handler
+  const handleRegisterSuccess = () => {
+    alert('Đăng ký thành công! Vui lòng đăng nhập.');
+    setShowRegister(false);
+  };
 
   // Toggle dark mode function
   const toggleDarkMode = () => {
@@ -321,19 +372,42 @@ const App = () => {
     return currentItems.slice(indexOfFirstItem, indexOfLastItem);
   };
 
+  // If not logged in, show login or register form
+  if (!isLoggedIn) {
+    if (showRegister) {
+      return <Register 
+        onRegisterSuccess={handleRegisterSuccess} 
+        onBackToLogin={() => setShowRegister(false)} 
+      />;
+    }
+    return <Login 
+      onLogin={handleLogin} 
+      onRegisterClick={() => setShowRegister(true)} 
+    />;
+  }
+
+  // If logged in, show main application
   return (
     <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
       <header className="app-header">
         <div className="logo-container">
           <img 
-  src={`${process.env.PUBLIC_URL}/Ilets_avatar.png`} 
-  alt="IELTS Schedule" 
-  className="logo" 
-/>
+            src={`${process.env.PUBLIC_URL}/Ilets_avatar.png`} 
+            alt="IELTS Schedule" 
+            className="logo" 
+          />
           <h1>IELTS Study Schedule</h1>
         </div>
-        <ThemeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+        <div className="header-actions">
+          <div className="user-info">
+            <span className="username">Xin chào, {userData?.username || 'Học viên'}</span>
+            <button className="logout-button" onClick={handleLogout}>Đăng xuất</button>
+          </div>
+          <ThemeToggle darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+        </div>
       </header>
+
+      {/* Main content - existing code */}
       {loading ? (
         <div className="loading-container">
           <div className="loading-spinner"></div>
@@ -355,7 +429,7 @@ const App = () => {
           <ScheduleTable 
             schedule={getCurrentItems()} 
             updateStatus={updateStatus} 
-            highlightToday={true} // Thêm prop để đánh dấu ngày hiện tại
+            highlightToday={true}
           />
           <Pagination 
             itemsPerPage={itemsPerPage} 
@@ -365,6 +439,7 @@ const App = () => {
           />
         </>
       )}
+      
       <div className="button-container">
         <button 
           className="regenerate-button"
